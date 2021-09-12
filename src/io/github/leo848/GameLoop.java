@@ -10,6 +10,8 @@ public class GameLoop implements Runnable {
 	SnakeFrame snakeFrame;
 	private Boolean running = false;
 	
+	int sleepMillis = 200;
+	
 	public GameLoop() {
 	
 	}
@@ -41,7 +43,7 @@ public class GameLoop implements Runnable {
 			Update();
 			Render();
 			try {
-				Thread.sleep(200);
+				Thread.sleep(sleepMillis);
 			} catch (InterruptedException ignored) {
 			
 			}

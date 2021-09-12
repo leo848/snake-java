@@ -109,7 +109,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	public void drawGame(Graphics2D g2D) {
 		g2D.fillRect(0, 0, 500, 500);
 		for (Vector pos : snakePosition) {
-			g2D.setPaint(getGradientColor());
+			g2D.setPaint(getGradientColor(snakePosition.indexOf(pos), snakePosition.size()));
 			g2D.fillRect((int) pos.x * 25, (int) pos.y * 25, 25, 25);
 		}
 		
@@ -117,32 +117,35 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 		g2D.fillRoundRect((int) applePosition.x * 25, (int) applePosition.y * 25, 25, 25, 1, 1);
 	}
 	
-	private Color getGradientColor() {
+	private Color getGradientColor(int index, int size) {
 		int cGradient = (int) Math.floor((frameCount % 1530) / 255d);
-		Color color;
+		int[] color;
+		
+		double brightness = NumTools.map(index, 0, size, 1, (float) 0.1);
 		
 		switch (cGradient) {
 			// green to yellow
-			case (0) -> color = new Color(frameCount % 255, 255, 0);
+			case (0) -> color = new int[] {frameCount % 255, 255, 0};
 			
 			//yellow to red
-			case (1) -> color = new Color(255, 255 - (frameCount % 255), 0);
+			case (1) -> color = new int[] {255, 255 - (frameCount % 255), 0};
 			
 			//red to pink
-			case (2) -> color = new Color(255, 0, frameCount % 255);
+			case (2) -> color = new int[] {255, 0, frameCount % 255};
 			
 			//pink to blue
-			case (3) -> color = new Color(255 - (frameCount % 255), 0, 255);
+			case (3) -> color = new int[] {255 - (frameCount % 255), 0, 255};
 			
 			//blue to turquoise
-			case (4) -> color = new Color(0, frameCount % 255, 255);
+			case (4) -> color = new int[] {0, frameCount % 255, 255};
 			
 			//turquoise to green
-			case (5) -> color = new Color(0, 255, 255 - (frameCount % 255));
+			case (5) -> color = new int[] {0, 255, 255 - (frameCount % 255)};
 			default -> throw new IllegalStateException("Unexpected value: " + cGradient);
 			// NumTools.map(index, 0, size, 255, 25)
 		}
-		return color;
+		
+		return new Color((int) brightness * color[0], (int) brightness * color[1], (int) (brightness * color[2]));
 	}
 	
 	private void drawText(Graphics2D g2D) {
