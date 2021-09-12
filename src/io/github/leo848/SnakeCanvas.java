@@ -145,7 +145,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 			// NumTools.map(index, 0, size, 255, 25)
 		}
 		
-		return new Color((int) brightness * color[0], (int) brightness * color[1], (int) (brightness * color[2]));
+		return new Color((int) (brightness * color[0]), (int) (brightness * color[1]), (int) (brightness * color[2]));
 	}
 	
 	private void drawText(Graphics2D g2D) {
