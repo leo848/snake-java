@@ -109,14 +109,40 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	public void drawGame(Graphics2D g2D) {
 		g2D.fillRect(0, 0, 500, 500);
 		for (Vector pos : snakePosition) {
-			g2D.setPaint(new Color(frameCount % 255,
-			                       (int) NumTools.map(snakePosition.indexOf(pos), 0, snakePosition.size(), 255, 25),
-			                       (int) NumTools.map(pos.y, 0, 19, 0, 30)));
+			g2D.setPaint(getGradientColor());
 			g2D.fillRect((int) pos.x * 25, (int) pos.y * 25, 25, 25);
 		}
 		
 		g2D.setPaint(new Color(0xFF0000));
 		g2D.fillRoundRect((int) applePosition.x * 25, (int) applePosition.y * 25, 25, 25, 1, 1);
+	}
+	
+	private Color getGradientColor() {
+		int cGradient = (int) Math.floor((frameCount % 1530) / 255d);
+		Color color;
+		
+		switch (cGradient) {
+			// green to yellow
+			case (0) -> color = new Color(frameCount % 255, 255, 0);
+			
+			//yellow to red
+			case (1) -> color = new Color(255, 255 - (frameCount % 255), 0);
+			
+			//red to pink
+			case (2) -> color = new Color(255, 0, frameCount % 255);
+			
+			//pink to blue
+			case (3) -> color = new Color(255 - (frameCount % 255), 0, 255);
+			
+			//blue to turquoise
+			case (4) -> color = new Color(0, frameCount % 255, 255);
+			
+			//turquoise to green
+			case (5) -> color = new Color(0, 255, 255 - (frameCount % 255));
+			default -> throw new IllegalStateException("Unexpected value: " + cGradient);
+			// NumTools.map(index, 0, size, 255, 25)
+		}
+		return color;
 	}
 	
 	private void drawText(Graphics2D g2D) {
