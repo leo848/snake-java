@@ -8,40 +8,28 @@ public class GameLoop implements Runnable {
 	public BufferStrategy bs;
 	public Graphics g;
 	SnakeFrame snakeFrame;
-	private Boolean running = false;
-	
 	int sleepMillis = 50;
+	private Boolean running = false;
 	
 	public GameLoop() {
 	
 	}
 	
-	
-	private void init() {
-		System.out.println("init");
-		snakeFrame = new SnakeFrame(this);
-		
+	public synchronized void start() {
+		System.out.println("start");
+		if (running) return;
+		thread = new Thread(this);
+		thread.start();
+		running = true;
 	}
-	
-	
-	private void Update() {
-		//System.out.println("update");
-		
-	}
-	
-	
-	private void Render() {
-		snakeFrame.repaintCanvas();
-	}
-	
 	
 	public void run() {
 		System.out.println("run");
 		init();
 		
 		while (running) {
-			Update();
-			Render();
+			update();
+			render();
 			try {
 				Thread.sleep(sleepMillis);
 			} catch (InterruptedException ignored) {
@@ -53,20 +41,23 @@ public class GameLoop implements Runnable {
 		stop();
 	}
 	
-	
-	public synchronized void start() {
-		System.out.println("start");
-		if (running)
-			return;
-		thread = new Thread(this);
-		thread.start();
-		running = true;
+	private void init() {
+		System.out.println("init");
+		snakeFrame = new SnakeFrame(this);
+		
 	}
 	
+	private void update() {
+		//System.out.println("update");
+		
+	}
+	
+	private void render() {
+		snakeFrame.repaintCanvas();
+	}
 	
 	public synchronized void stop() {
-		if (!running)
-			return;
+		if (!running) return;
 		running = false;
 		snakeFrame.dispose();
 		try {

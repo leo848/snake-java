@@ -3,8 +3,7 @@ package io.github.leo848;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 
 public class SnakeCanvas extends JPanel implements KeyListener {
 	
@@ -26,6 +25,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	Font gameOverFont = new Font("Inter", Font.PLAIN, 65);
 	
 	Vector direction = new Vector(0, 0);
+	boolean turbo;
 	
 	
 	SnakeCanvas(GameLoop loop) {
@@ -47,12 +47,12 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 		g2D.setPaint(Color.black);
 		g2D.setStroke(new BasicStroke(0));
 		g2D.setFont(scoreFont);
-
-		if (frameCount % 4 == 0){
+		
+		if (frameCount % 4 == 0 || turbo) {
 			updateDirection();
 			updateSnake();
 		}
-
+		
 		
 		if (checkForGameOver(g2D)) {
 			return;
@@ -171,28 +171,32 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 					keyStack.add('w');
 				}
 			}
-			case KeyEvent.VK_LEFT,KeyEvent.VK_A -> {
+			case KeyEvent.VK_LEFT, KeyEvent.VK_A -> {
 				if (!keyStack.contains('a') && (!direction.equals(Directions.RIGHT) || !keyStack.isEmpty())) {
 					keyStack.add('a');
 				}
 			}
-			case KeyEvent.VK_DOWN,KeyEvent.VK_S -> {
+			case KeyEvent.VK_DOWN, KeyEvent.VK_S -> {
 				if (!keyStack.contains('s') && (!direction.equals(Directions.UP) || !keyStack.isEmpty())) {
 					keyStack.add('s');
 				}
 			}
-			case KeyEvent.VK_RIGHT,KeyEvent.VK_D -> {
+			case KeyEvent.VK_RIGHT, KeyEvent.VK_D -> {
 				if (!keyStack.contains('d') && (!direction.equals(Directions.LEFT) || !keyStack.isEmpty())) {
 					keyStack.add('d');
 				}
 			}
 			
-			case 'y' -> System.out.println(NumTools.map(10, 0, 19, 25, 255));
+			case KeyEvent.VK_SPACE -> turbo = true;
 		}
 	}
 	
-	
 	@Override
 	public void keyReleased(KeyEvent e) {
+		int keyCode = e.getKeyCode();
+		switch (keyCode) {
+			case KeyEvent.VK_SPACE -> turbo = false;
+			case KeyEvent.VK_CAPS_LOCK -> frameCount += 20;
+		}
 	}
 }
