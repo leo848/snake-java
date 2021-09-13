@@ -10,7 +10,7 @@ public class GameLoop implements Runnable {
 	SnakeFrame snakeFrame;
 	private Boolean running = false;
 	
-	int sleepMillis = 200;
+	int sleepMillis = 50;
 	
 	public GameLoop() {
 	

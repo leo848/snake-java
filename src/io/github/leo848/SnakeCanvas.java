@@ -47,9 +47,12 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 		g2D.setPaint(Color.black);
 		g2D.setStroke(new BasicStroke(0));
 		g2D.setFont(scoreFont);
-		
-		updateDirection();
-		updateSnake();
+
+		if (frameCount % 4 == 0){
+			updateDirection();
+			updateSnake();
+		}
+
 		
 		if (checkForGameOver(g2D)) {
 			return;
@@ -161,24 +164,24 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
-		char keyCode = e.getKeyChar();
+		int keyCode = e.getKeyCode();
 		switch (keyCode) {
-			case 'w' -> {
+			case KeyEvent.VK_UP, KeyEvent.VK_W -> {
 				if (!keyStack.contains('w') && (!direction.equals(Directions.DOWN) || !keyStack.isEmpty())) {
 					keyStack.add('w');
 				}
 			}
-			case 'a' -> {
+			case KeyEvent.VK_LEFT,KeyEvent.VK_A -> {
 				if (!keyStack.contains('a') && (!direction.equals(Directions.RIGHT) || !keyStack.isEmpty())) {
 					keyStack.add('a');
 				}
 			}
-			case 's' -> {
+			case KeyEvent.VK_DOWN,KeyEvent.VK_S -> {
 				if (!keyStack.contains('s') && (!direction.equals(Directions.UP) || !keyStack.isEmpty())) {
 					keyStack.add('s');
 				}
 			}
-			case 'd' -> {
+			case KeyEvent.VK_RIGHT,KeyEvent.VK_D -> {
 				if (!keyStack.contains('d') && (!direction.equals(Directions.LEFT) || !keyStack.isEmpty())) {
 					keyStack.add('d');
 				}
