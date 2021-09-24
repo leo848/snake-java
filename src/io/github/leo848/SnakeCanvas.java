@@ -10,7 +10,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	Random random = new Random();
 	GameLoop gameLoop;
 	
-	boolean safeMode = true;
+	boolean safeMode = false;
 	
 	int frameCount = 0;
 	
@@ -19,7 +19,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	ArrayList<Character> keyStack = new ArrayList<>();
 	
 	ArrayList<Vector> snakePosition = new ArrayList<>();
-	Vector applePosition = new Vector(random.nextInt(20), random.nextInt(20));
+	ArrayList<Vector> applePositions = new ArrayList<>(5);
 	
 	int score = 0;
 	
@@ -36,15 +36,41 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 		
 		snakePosition.add(new Vector(10, 10));
 		snakePosition.add(new Vector(10, 11));
+		for (int i = 0; i < 5; i++) {
+			newRandomApple();
+		}
+		
+	}
+	
+	private void newRandomApple() {
+		Vector newAppleVector;
+		do {
+			newAppleVector = new Vector(random.nextInt(20), random.nextInt(20));
+		} while (applePositions.contains(newAppleVector) || snakePosition.contains(newAppleVector));
+		applePositions.add(newAppleVector);
 	}
 	
 	public void paint(Graphics graphics) {
+		Graphics2D g2D = (Graphics2D) graphics;
 		frameCount++;
+		
 		if (gameOver) {
+			g2D.setPaint(new Color(random.nextInt(0x330000) + 0xcc0000));
+			g2D.fillOval((int) NumTools.map((float) random.nextGaussian(),
+			                                -1,
+			                                1,
+			                                snakePosition.get(0).x * 25 - 20,
+			                                snakePosition.get(0).x * 25 + 20) - 3,
+			             (int) NumTools.map((float) random.nextGaussian(),
+			                                -1,
+			                                1,
+			                                snakePosition.get(0).y * 25 - 20,
+			                                snakePosition.get(0).y * 25 + 20) - 3,
+			             5,
+			             5);
 			return;
 		}
 		
-		Graphics2D g2D = (Graphics2D) graphics;
 		
 		g2D.setPaint(Color.black);
 		g2D.setStroke(new BasicStroke(0));
@@ -53,6 +79,12 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 		if (frameCount % 4 == 0 || turbo) {
 			updateDirection();
 			updateSnake();
+		}
+		
+		if (frameCount % 100 == random.nextInt(100)) {
+			
+			applePositions.remove(0);
+			newRandomApple();
 		}
 		
 		
@@ -66,15 +98,21 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	
 	private void updateSnake() {
 		if (direction.mag() > 0) {
+			if (safeMode) {
+				Vector v = snakePosition.get(0).copy().add(direction);
+				if (v.x < 0 || v.x > 20 || v.y < 0 || v.y > 20) {
+					direction = Directions.nextDirection(direction);
+					this.repaint();
+				}
+			}
 			snakePosition.add(0, snakePosition.get(0).copy().add(direction));
 			snakePosition.remove(snakePosition.size() - 1);
 		}
 		
-		if (snakePosition.get(0).equals(applePosition)) {
+		if (applePositions.contains(snakePosition.get(0))) {
 			score++;
-			while (snakePosition.contains(applePosition)) {
-				applePosition = new Vector(random.nextInt(20), random.nextInt(20));
-			}
+			applePositions.remove(snakePosition.get(0));
+			newRandomApple();
 			snakePosition.add(snakePosition.get(snakePosition.size() - 1));
 		}
 	}
@@ -104,6 +142,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	}
 	
 	public void gameOver(Graphics2D g2D) {
+		if (safeMode) return;
 		g2D.setPaint(new Color(0xffffff));
 		g2D.setFont(gameOverFont);
 		g2D.drawString("Game over", 100, 100);
@@ -114,7 +153,6 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	public void drawGame(Graphics2D g2D) {
 		g2D.fillRect(0, 0, 500, 500);
 		for (Vector pos : snakePosition) {
-			int index = snakePosition.indexOf(pos);
 			
 			boolean top, bottom, left, right;
 			
@@ -143,7 +181,11 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 		}
 		
 		g2D.setPaint(new Color(0xFF0000));
-		g2D.fillRoundRect((int) applePosition.x * 25, (int) applePosition.y * 25, 25, 25, 1, 1);
+		
+		for (Vector pos : applePositions) {
+			g2D.fillRoundRect((int) pos.x * 25, (int) pos.y * 25, 25, 25, 1, 1);
+			
+		}
 	}
 	
 	private Color getGradientColor(int index, int size) {
