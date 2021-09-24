@@ -52,25 +52,32 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	
 	public void paint(Graphics graphics) {
 		Graphics2D g2D = (Graphics2D) graphics;
-		frameCount++;
 		
 		if (gameOver) {
-			g2D.setPaint(new Color(random.nextInt(0x330000) + 0xcc0000));
-			g2D.fillOval((int) NumTools.map((float) random.nextGaussian(),
-			                                -1,
-			                                1,
-			                                snakePosition.get(0).x * 25 - 20,
-			                                snakePosition.get(0).x * 25 + 20) - 3,
-			             (int) NumTools.map((float) random.nextGaussian(),
-			                                -1,
-			                                1,
-			                                snakePosition.get(0).y * 25 - 20,
-			                                snakePosition.get(0).y * 25 + 20) - 3,
-			             5,
-			             5);
+			Color gColor = getGradientColor(0, 1);
+			for (int i = 0; i < 20; i++) {
+				int red = NumTools.colorLimit((gColor.getRed() + random.nextInt(301)) - 150);
+				int green = NumTools.colorLimit((gColor.getGreen() + random.nextInt(301)) - 150);
+				int blue = NumTools.colorLimit((gColor.getBlue() + random.nextInt(301)) - 150);
+				g2D.setPaint(new Color(red, green, blue));
+				
+				g2D.fillOval((int) NumTools.map((float) random.nextGaussian(),
+				                                -1,
+				                                1,
+				                                snakePosition.get(0).x * 25 - 25,
+				                                snakePosition.get(0).x * 25 + 25) - 3,
+				             (int) NumTools.map((float) random.nextGaussian(),
+				                                -1,
+				                                1,
+				                                snakePosition.get(0).y * 25 - 25,
+				                                snakePosition.get(0).y * 25 + 25) - 3,
+				             5,
+				             5);
+			}
 			return;
 		}
 		
+		frameCount++;
 		
 		g2D.setPaint(Color.black);
 		g2D.setStroke(new BasicStroke(0));
