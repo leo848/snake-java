@@ -132,7 +132,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	
 	
 	public void drawGame(Graphics2D g2D) {
-		snake.draw(g2D, frameCount);
+		snake.draw(g2D, frameCount, skippedFrames);
 		
 		g2D.setPaint(new Color(0xFF0000));
 		

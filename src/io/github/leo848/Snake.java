@@ -15,20 +15,21 @@ public class Snake {
 		positions.add(new Vector(10, 11));
 	}
 	
-	public void draw(Graphics2D g2D, int frameCount) {
+	public void draw(Graphics2D g2D, int count, int frameCount) {
 		g2D.fillRect(0, 0, 500, 500);
 		for (Vector pos : positions) {
 			
-			boolean top, bottom, left, right;
-			
 			g2D.setPaint(NumTools.getGradientColor(positions.indexOf(pos), positions.size(), frameCount));
-			g2D.fillRoundRect((int) pos.x * 25, (int) pos.y * 25, 25, 25, 20, 20);
+			int initialX = (int) (pos.x * 25);
+			int initialY = (int) (pos.y * 25);
+			
+			g2D.fillRoundRect(initialX, initialY * 25, 25, 25, 20, 20);
 			
 			
-			top = positions.contains(pos.copy().add(0, -1));
-			bottom = positions.contains(pos.copy().add(0, 1));
-			left = positions.contains(pos.copy().add(-1, 0));
-			right = positions.contains(pos.copy().add(1, 0));
+			boolean top = positions.contains(pos.copy().add(0, -1));
+			boolean bottom = positions.contains(pos.copy().add(0, 1));
+			boolean left = positions.contains(pos.copy().add(-1, 0));
+			boolean right = positions.contains(pos.copy().add(1, 0));
 			
 			
 			if (top || left) {

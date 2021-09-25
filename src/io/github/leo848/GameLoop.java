@@ -9,8 +9,8 @@ public class GameLoop implements Runnable {
 	public Graphics g;
 	SnakeFrame snakeFrame;
 	
-	int targetFPS = 60;
-	int sleepMillis = 1000 / targetFPS;
+	int optimalFPS = 60;
+	int sleepMillis = 1000 / optimalFPS;
 	private Boolean running = false;
 	
 	public GameLoop() {
