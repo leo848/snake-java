@@ -2,10 +2,12 @@ package io.github.leo848;
 
 import java.awt.*;
 
+@SuppressWarnings({"SameParameterValue", "unused"})
 public class NumTools {
 	static int colorLimit(int i) {
 		return limit(i, 0, 255);
 	}
+	
 	
 	static int limit(int i, int start, int stop) {
 		return i < start ? start : Math.min(i, stop);
