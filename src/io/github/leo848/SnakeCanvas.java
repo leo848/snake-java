@@ -7,13 +7,11 @@ import java.util.*;
 
 public class SnakeCanvas extends JPanel implements KeyListener {
 	
+	final long startTime = System.nanoTime();
 	Random random = new Random();
 	GameLoop gameLoop;
 	
-	boolean safeMode = false;
-	
 	int frameCount = 0;
-	
 	boolean gameOver = false;
 	
 	ArrayList<Character> keyStack = new ArrayList<>();
@@ -27,7 +25,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	Font gameOverFont = new Font("Inter", Font.PLAIN, 65);
 	
 	Vector direction = new Vector(0, 0);
-	boolean turbo;
+	boolean turboMode;
 	
 	
 	SnakeCanvas(GameLoop loop) {
@@ -64,19 +62,20 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 		g2D.setStroke(new BasicStroke(0));
 		g2D.setFont(scoreFont);
 		
-		if (frameCount % 4 == 0 || turbo) {
+		if (frameCount % 4 == 0 || turboMode) {
 			updateDirection();
 			updateSnake();
 		}
 		
 		if (frameCount % 100 == random.nextInt(100)) {
-			
 			applePositions.remove(0);
 			newRandomApple();
 		}
 		
 		
 		if (checkForGameOver(g2D)) {
+			g2D.drawRect(-0, -0, 500, 500);
+			drawText(g2D);
 			return;
 		}
 		
@@ -107,15 +106,28 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 		}
 	}
 	
+	private Color getGradientColor(int index, int size) {
+		int cGradient = (int) Math.floor((frameCount % 1530) / 255d);
+		int[] color;
+		
+		double brightness = NumTools.map(index, 0, size, 1, (float) 0.1);
+		
+		switch (cGradient) {
+			case (0) -> color = new int[] {frameCount % 255, 255, 0};
+			case (1) -> color = new int[] {255, 255 - (frameCount % 255), 0};
+			case (2) -> color = new int[] {255, 0, frameCount % 255};
+			case (3) -> color = new int[] {255 - (frameCount % 255), 0, 255};
+			case (4) -> color = new int[] {0, frameCount % 255, 255};
+			case (5) -> color = new int[] {0, 255, 255 - (frameCount % 255)};
+			default -> throw new IllegalStateException("Unexpected value: " + cGradient);
+			// NumTools.map(index, 0, size, 255, 25)
+		}
+		
+		return new Color((int) (brightness * color[0]), (int) (brightness * color[1]), (int) (brightness * color[2]));
+	}
+	
 	private void updateSnake() {
 		if (direction.mag() > 0) {
-			if (safeMode) {
-				Vector v = snakePosition.get(0).copy().add(direction);
-				if (v.x < 0 || v.x > 20 || v.y < 0 || v.y > 20) {
-					direction = Directions.nextDirection(direction);
-					this.repaint();
-				}
-			}
 			snakePosition.add(0, snakePosition.get(0).copy().add(direction));
 			snakePosition.remove(snakePosition.size() - 1);
 		}
@@ -153,7 +165,6 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	}
 	
 	public void gameOver(Graphics2D g2D) {
-		if (safeMode) return;
 		g2D.setPaint(new Color(0xffffff));
 		g2D.setFont(gameOverFont);
 		g2D.drawString("Game over", 100, 100);
@@ -199,31 +210,15 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 		}
 	}
 	
-	private Color getGradientColor(int index, int size) {
-		int cGradient = (int) Math.floor((frameCount % 1530) / 255d);
-		int[] color;
-		
-		double brightness = NumTools.map(index, 0, size, 1, (float) 0.1);
-		
-		switch (cGradient) {
-			case (0) -> color = new int[] {frameCount % 255, 255, 0};
-			case (1) -> color = new int[] {255, 255 - (frameCount % 255), 0};
-			case (2) -> color = new int[] {255, 0, frameCount % 255};
-			case (3) -> color = new int[] {255 - (frameCount % 255), 0, 255};
-			case (4) -> color = new int[] {0, frameCount % 255, 255};
-			case (5) -> color = new int[] {0, 255, 255 - (frameCount % 255)};
-			default -> throw new IllegalStateException("Unexpected value: " + cGradient);
-			// NumTools.map(index, 0, size, 255, 25)
-		}
-		
-		return new Color((int) (brightness * color[0]), (int) (brightness * color[1]), (int) (brightness * color[2]));
-	}
-	
 	private void drawText(Graphics2D g2D) {
 		g2D.setStroke(new BasicStroke(0));
 		g2D.setPaint(new Color(0xffffff));
 		g2D.setFont(scoreFont);
+		
 		g2D.drawString(String.valueOf(score), 0, 20);
+		
+		double seconds = (double) ((System.nanoTime() - startTime) / 1_000_000_000);
+		g2D.drawString(String.format("%.2f", (double) frameCount / seconds), 0, 50);
 	}
 	
 	@Override
@@ -255,7 +250,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 				}
 			}
 			
-			case KeyEvent.VK_SPACE -> turbo = true;
+			case KeyEvent.VK_SPACE -> turboMode = true;
 		}
 	}
 	
@@ -263,7 +258,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	public void keyReleased(KeyEvent e) {
 		int keyCode = e.getKeyCode();
 		switch (keyCode) {
-			case KeyEvent.VK_SPACE -> turbo = false;
+			case KeyEvent.VK_SPACE -> turboMode = false;
 			case KeyEvent.VK_CAPS_LOCK -> frameCount += 20;
 		}
 	}
