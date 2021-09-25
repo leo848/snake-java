@@ -54,26 +54,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 		Graphics2D g2D = (Graphics2D) graphics;
 		
 		if (gameOver) {
-			Color gColor = getGradientColor(0, 1);
-			for (int i = 0; i < 20; i++) {
-				int red = NumTools.colorLimit((gColor.getRed() + random.nextInt(301)) - 150);
-				int green = NumTools.colorLimit((gColor.getGreen() + random.nextInt(301)) - 150);
-				int blue = NumTools.colorLimit((gColor.getBlue() + random.nextInt(301)) - 150);
-				g2D.setPaint(new Color(red, green, blue));
-				
-				g2D.fillOval((int) NumTools.map((float) random.nextGaussian(),
-				                                -1,
-				                                1,
-				                                snakePosition.get(0).x * 25 - 25,
-				                                snakePosition.get(0).x * 25 + 25) - 3,
-				             (int) NumTools.map((float) random.nextGaussian(),
-				                                -1,
-				                                1,
-				                                snakePosition.get(0).y * 25 - 25,
-				                                snakePosition.get(0).y * 25 + 25) - 3,
-				             5,
-				             5);
-			}
+			drawSplashEffect(g2D);
 			return;
 		}
 		
@@ -101,6 +82,29 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 		
 		drawGame(g2D);
 		drawText(g2D);
+	}
+	
+	private void drawSplashEffect(Graphics2D g2D) {
+		Color gColor = getGradientColor(0, 1);
+		for (int i = 0; i < 20; i++) {
+			int red = NumTools.colorLimit((gColor.getRed() + random.nextInt(301)) - 150);
+			int green = NumTools.colorLimit((gColor.getGreen() + random.nextInt(301)) - 150);
+			int blue = NumTools.colorLimit((gColor.getBlue() + random.nextInt(301)) - 150);
+			g2D.setPaint(new Color(red, green, blue));
+			
+			g2D.fillOval((int) NumTools.map((float) random.nextGaussian(),
+			                                -1,
+			                                1,
+			                                snakePosition.get(0).x * 25 - 25,
+			                                snakePosition.get(0).x * 25 + 25) - 3,
+			             (int) NumTools.map((float) random.nextGaussian(),
+			                                -1,
+			                                1,
+			                                snakePosition.get(0).y * 25 - 25,
+			                                snakePosition.get(0).y * 25 + 25) - 3,
+			             5,
+			             5);
+		}
 	}
 	
 	private void updateSnake() {
