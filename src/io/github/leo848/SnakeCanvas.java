@@ -26,7 +26,8 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	Font scoreFont = new Font("Inter", Font.PLAIN, 20);
 	Font gameOverFont = new Font("Inter", Font.PLAIN, 65);
 	
-	boolean turboMode;
+	
+	int skippedFrames = 12;
 	
 	
 	SnakeCanvas(GameLoop loop) {
@@ -62,7 +63,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 		g2D.setStroke(new BasicStroke(0));
 		g2D.setFont(scoreFont);
 		
-		if (frameCount % 4 == 0 || turboMode) {
+		if (frameCount % skippedFrames == 0) {
 			updateDirection();
 			updateSnake();
 		}
@@ -181,7 +182,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 				}
 			}
 			
-			case KeyEvent.VK_SPACE -> turboMode = true;
+			case KeyEvent.VK_SPACE -> skippedFrames = 4;
 		}
 	}
 	
@@ -189,7 +190,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	public void keyReleased(KeyEvent e) {
 		int keyCode = e.getKeyCode();
 		switch (keyCode) {
-			case KeyEvent.VK_SPACE -> turboMode = false;
+			case KeyEvent.VK_SPACE -> skippedFrames = 12;
 			case KeyEvent.VK_CAPS_LOCK -> frameCount += 20;
 		}
 	}
