@@ -9,21 +9,42 @@ public class Snake {
 	
 	Vector direction = Directions.NONE;
 	ArrayList<Vector> positions = new ArrayList<>();
+	private int animFrame;
 	
 	public Snake() {
 		positions.add(new Vector(10, 10));
 		positions.add(new Vector(10, 11));
 	}
 	
-	public void draw(Graphics2D g2D, int count, int frameCount) {
+	public void draw(Graphics2D g2D, int frameCount, int count) {
 		g2D.fillRect(0, 0, 500, 500);
+		animFrame++;
+		
+		g2D.setPaint(NumTools.getGradientColor(0, 1, frameCount));
+		g2D.fillRect((int) (positions.get(0).x * 25), (int) (positions.get(0).y * 25), 25, 25);
+		
 		for (Vector pos : positions) {
 			
 			g2D.setPaint(NumTools.getGradientColor(positions.indexOf(pos), positions.size(), frameCount));
+			
 			int initialX = (int) (pos.x * 25);
 			int initialY = (int) (pos.y * 25);
 			
-			g2D.fillRoundRect(initialX, initialY * 25, 25, 25, 20, 20);
+			Vector tempDirection = positions.get(0).equals(pos) ?
+			                       direction :
+			                       positions.get(positions.size() - 1).equals(pos) ?
+			                       new Vector(positions.get(positions.indexOf(pos) - 1).x,
+			                                  positions.get(positions.indexOf(pos) - 1).y).sub(pos) :
+			                       Directions.NONE;
+			
+			
+			if (!direction.equals(Directions.NONE)) {
+				initialX += tempDirection.x * NumTools.map(animFrame, 0, count, 0, 25);
+				initialY += tempDirection.y * NumTools.map(animFrame, 0, count, 0, 25);
+			}
+			
+			
+			g2D.fillRoundRect(initialX, initialY, 25, 25, 20, 20);
 			
 			
 			boolean top = positions.contains(pos.copy().add(0, -1));
@@ -33,16 +54,16 @@ public class Snake {
 			
 			
 			if (top || left) {
-				g2D.fillRect((int) pos.x * 25, (int) pos.y * 25, 12, 12);
+				g2D.fillRect(initialX, initialY, 12, 12);
 			}
 			if (top || right) {
-				g2D.fillRect((int) pos.x * 25 + 13, (int) pos.y * 25, 12, 12);
+				g2D.fillRect(initialX + 13, initialY, 12, 12);
 			}
 			if (bottom || left) {
-				g2D.fillRect((int) pos.x * 25, (int) pos.y * 25 + 13, 12, 12);
+				g2D.fillRect(initialX, initialY + 13, 12, 12);
 			}
 			if (bottom || right) {
-				g2D.fillRect((int) pos.x * 25 + 13, (int) pos.y * 25 + 13, 12, 12);
+				g2D.fillRect(initialX + 13, initialY + 13, 12, 12);
 			}
 		}
 	}
@@ -62,6 +83,7 @@ public class Snake {
 	}
 	
 	public void updatePosition() {
+		animFrame = 0;
 		if (direction.mag() > 0) {
 			positions.add(0, positions.get(0).copy().add(direction));
 			positions.remove(positions.size() - 1);
