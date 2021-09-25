@@ -7,6 +7,8 @@ import java.util.*;
 
 public class SnakeCanvas extends JPanel implements KeyListener {
 	
+	final Snake snake = new Snake();
+	
 	final long startTime = System.nanoTime();
 	Random random = new Random();
 	GameLoop gameLoop;
@@ -16,7 +18,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	
 	ArrayList<Character> keyStack = new ArrayList<>();
 	
-	ArrayList<Vector> snakePosition = new ArrayList<>();
+	
 	ArrayList<Vector> applePositions = new ArrayList<>(5);
 	
 	int score = 0;
@@ -24,7 +26,6 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	Font scoreFont = new Font("Inter", Font.PLAIN, 20);
 	Font gameOverFont = new Font("Inter", Font.PLAIN, 65);
 	
-	Vector direction = new Vector(0, 0);
 	boolean turboMode;
 	
 	
@@ -32,8 +33,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 		gameLoop = loop;
 		setPreferredSize(new Dimension(500, 500));
 		
-		snakePosition.add(new Vector(10, 10));
-		snakePosition.add(new Vector(10, 11));
+		
 		for (int i = 0; i < 5; i++) {
 			newRandomApple();
 		}
@@ -44,7 +44,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 		Vector newAppleVector;
 		do {
 			newAppleVector = new Vector(random.nextInt(20), random.nextInt(20));
-		} while (applePositions.contains(newAppleVector) || snakePosition.contains(newAppleVector));
+		} while (applePositions.contains(newAppleVector) || snake.positions.contains(newAppleVector));
 		applePositions.add(newAppleVector);
 	}
 	
@@ -73,9 +73,11 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 		}
 		
 		
-		if (checkForGameOver(g2D)) {
+		if (snake.checkForGameOver(g2D)) {
 			g2D.drawRect(-0, -0, 500, 500);
 			drawText(g2D);
+			drawSplashEffect(g2D);
+			gameOver = true;
 			return;
 		}
 		
@@ -84,7 +86,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	}
 	
 	private void drawSplashEffect(Graphics2D g2D) {
-		Color gColor = getGradientColor(0, 1);
+		Color gColor = NumTools.getGradientColor(0, 1, frameCount);
 		for (int i = 0; i < 20; i++) {
 			int red = NumTools.colorLimit((gColor.getRed() + random.nextInt(301)) - 150);
 			int green = NumTools.colorLimit((gColor.getGreen() + random.nextInt(301)) - 150);
@@ -94,113 +96,42 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 			g2D.fillOval((int) NumTools.map((float) random.nextGaussian(),
 			                                -1,
 			                                1,
-			                                snakePosition.get(0).x * 25 - 25,
-			                                snakePosition.get(0).x * 25 + 25) - 3,
+			                                snake.positions.get(0).x * 25 - 25,
+			                                snake.positions.get(0).x * 25 + 25) - 3,
 			             (int) NumTools.map((float) random.nextGaussian(),
 			                                -1,
 			                                1,
-			                                snakePosition.get(0).y * 25 - 25,
-			                                snakePosition.get(0).y * 25 + 25) - 3,
+			                                snake.positions.get(0).y * 25 - 25,
+			                                snake.positions.get(0).y * 25 + 25) - 3,
 			             5,
 			             5);
 		}
 	}
 	
-	private Color getGradientColor(int index, int size) {
-		int cGradient = (int) Math.floor((frameCount % 1530) / 255d);
-		int[] color;
-		
-		double brightness = NumTools.map(index, 0, size, 1, (float) 0.1);
-		
-		switch (cGradient) {
-			case (0) -> color = new int[] {frameCount % 255, 255, 0};
-			case (1) -> color = new int[] {255, 255 - (frameCount % 255), 0};
-			case (2) -> color = new int[] {255, 0, frameCount % 255};
-			case (3) -> color = new int[] {255 - (frameCount % 255), 0, 255};
-			case (4) -> color = new int[] {0, frameCount % 255, 255};
-			case (5) -> color = new int[] {0, 255, 255 - (frameCount % 255)};
-			default -> throw new IllegalStateException("Unexpected value: " + cGradient);
-			// NumTools.map(index, 0, size, 255, 25)
-		}
-		
-		return new Color((int) (brightness * color[0]), (int) (brightness * color[1]), (int) (brightness * color[2]));
-	}
 	
 	private void updateSnake() {
-		if (direction.mag() > 0) {
-			snakePosition.add(0, snakePosition.get(0).copy().add(direction));
-			snakePosition.remove(snakePosition.size() - 1);
-		}
+		snake.updatePosition();
 		
-		if (applePositions.contains(snakePosition.get(0))) {
+		if (snake.updateAppleCollision(applePositions)) {
 			score++;
-			applePositions.remove(snakePosition.get(0));
 			newRandomApple();
-			snakePosition.add(snakePosition.get(snakePosition.size() - 1));
 		}
 	}
 	
 	private void updateDirection() {
 		if (keyStack.size() > 0) {
 			switch (keyStack.remove(0)) {
-				case 'w' -> direction.set(0, -1);
-				case 'a' -> direction.set(-1, 0);
-				case 's' -> direction.set(0, +1);
-				case 'd' -> direction.set(+1, 0);
+				case 'w' -> snake.setDirection(Directions.UP);
+				case 'a' -> snake.setDirection(Directions.LEFT);
+				case 's' -> snake.setDirection(Directions.DOWN);
+				case 'd' -> snake.setDirection(Directions.RIGHT);
 			}
 		}
 	}
 	
-	private boolean checkForGameOver(Graphics2D g2D) {
-		gameOver = false;
-		if (snakePosition.subList(1, snakePosition.size()).contains(snakePosition.get(0))) {
-			gameOver(g2D);
-		} else {
-			Vector sp = snakePosition.get(0);
-			if (sp.x < 0 || sp.x > 19 || sp.y < 0 || sp.y > 19) {
-				gameOver(g2D);
-			}
-		}
-		return gameOver;
-	}
-	
-	public void gameOver(Graphics2D g2D) {
-		g2D.setPaint(new Color(0xffffff));
-		g2D.setFont(gameOverFont);
-		g2D.drawString("Game over", 100, 100);
-		
-		gameOver = true;
-	}
 	
 	public void drawGame(Graphics2D g2D) {
-		g2D.fillRect(0, 0, 500, 500);
-		for (Vector pos : snakePosition) {
-			
-			boolean top, bottom, left, right;
-			
-			g2D.setPaint(getGradientColor(snakePosition.indexOf(pos), snakePosition.size()));
-			g2D.fillRoundRect((int) pos.x * 25, (int) pos.y * 25, 25, 25, 20, 20);
-			
-			
-			top = snakePosition.contains(pos.copy().add(0, -1));
-			bottom = snakePosition.contains(pos.copy().add(0, 1));
-			left = snakePosition.contains(pos.copy().add(-1, 0));
-			right = snakePosition.contains(pos.copy().add(1, 0));
-			
-			
-			if (top || left) {
-				g2D.fillRect((int) pos.x * 25, (int) pos.y * 25, 12, 12);
-			}
-			if (top || right) {
-				g2D.fillRect((int) pos.x * 25 + 13, (int) pos.y * 25, 12, 12);
-			}
-			if (bottom || left) {
-				g2D.fillRect((int) pos.x * 25, (int) pos.y * 25 + 13, 12, 12);
-			}
-			if (bottom || right) {
-				g2D.fillRect((int) pos.x * 25 + 13, (int) pos.y * 25 + 13, 12, 12);
-			}
-		}
+		snake.draw(g2D, frameCount);
 		
 		g2D.setPaint(new Color(0xFF0000));
 		
@@ -230,22 +161,22 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 		int keyCode = e.getKeyCode();
 		switch (keyCode) {
 			case KeyEvent.VK_UP, KeyEvent.VK_W -> {
-				if (!keyStack.contains('w') && (!direction.equals(Directions.DOWN) || !keyStack.isEmpty())) {
+				if (!keyStack.contains('w') && (!snake.direction.equals(Directions.DOWN) || !keyStack.isEmpty())) {
 					keyStack.add('w');
 				}
 			}
 			case KeyEvent.VK_LEFT, KeyEvent.VK_A -> {
-				if (!keyStack.contains('a') && (!direction.equals(Directions.RIGHT) || !keyStack.isEmpty())) {
+				if (!keyStack.contains('a') && (!snake.direction.equals(Directions.RIGHT) || !keyStack.isEmpty())) {
 					keyStack.add('a');
 				}
 			}
 			case KeyEvent.VK_DOWN, KeyEvent.VK_S -> {
-				if (!keyStack.contains('s') && (!direction.equals(Directions.UP) || !keyStack.isEmpty())) {
+				if (!keyStack.contains('s') && (!snake.direction.equals(Directions.UP) || !keyStack.isEmpty())) {
 					keyStack.add('s');
 				}
 			}
 			case KeyEvent.VK_RIGHT, KeyEvent.VK_D -> {
-				if (!keyStack.contains('d') && (!direction.equals(Directions.LEFT) || !keyStack.isEmpty())) {
+				if (!keyStack.contains('d') && (!snake.direction.equals(Directions.LEFT) || !keyStack.isEmpty())) {
 					keyStack.add('d');
 				}
 			}

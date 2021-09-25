@@ -25,7 +25,7 @@ public class GameLoop implements Runnable {
 		running = true;
 	}
 	
-	@SuppressWarnings(value = "BusyWait")
+	@SuppressWarnings("BusyWait")
 	public void run() {
 		System.out.println("run");
 		init();
