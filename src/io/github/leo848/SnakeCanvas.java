@@ -23,19 +23,15 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	
 	Font scoreFont = new Font("Inter", Font.PLAIN, 20);
 	
-	
 	int skippedFrames = 12;
-	
 	
 	SnakeCanvas(GameLoop loop) {
 		gameLoop = loop;
 		setPreferredSize(new Dimension(500, 500));
 		
-		
 		for (int i = 0; i < 5; i++) {
 			newRandomApple();
 		}
-		
 	}
 	
 	private void newRandomApple() {
@@ -61,15 +57,13 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 		g2D.setFont(scoreFont);
 		
 		if (frameCount % skippedFrames == 0) {
+			for (Apple apple: applePositions) {
+				apple.move(snake.positions);
+			}
+			
 			updateDirection();
 			updateSnake();
 		}
-		
-		if (frameCount % 100 == random.nextInt(100)) {
-			applePositions.remove(0);
-			newRandomApple();
-		}
-		
 		
 		if (snake.checkForGameOver(g2D)) {
 			g2D.drawRect(-0, -0, 500, 500);
@@ -106,7 +100,6 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 		}
 	}
 	
-	
 	private void updateSnake() {
 		snake.updatePosition();
 		
@@ -127,15 +120,13 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 		}
 	}
 	
-	
 	public void drawGame(Graphics2D g2D) {
 		snake.draw(g2D, frameCount, skippedFrames);
 		
-		g2D.setPaint(new Color(0xFF0000));
+		g2D.setPaint(new Color(0xff0000));
 		
-		for (Apple apple : applePositions) {
+		for (Apple apple: applePositions) {
 			g2D.fillRoundRect((int) apple.pos.x * 25, (int) apple.pos.y * 25, 25, 25, 1, 1);
-			
 		}
 	}
 	

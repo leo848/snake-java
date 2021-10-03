@@ -10,9 +10,11 @@ public class Apple {
 		this.pos = pos;
 	}
 	
-	public void move() {
+	public void move(ArrayList<Vector> snakePositions) {
 		if (random.nextInt(10) == 0) {
-			pos.add(Directions.directions[random.nextInt(Directions.directions.length)]);
+			do {
+				pos.add(Directions.directions[random.nextInt(Directions.directions.length)]);
+			} while ((pos.x > 20 || pos.x < 0 || pos.y > 20 || pos.y < 0) || snakePositions.contains(pos));
 		}
 	}
 	
