@@ -17,14 +17,11 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	boolean gameOver = false;
 	
 	ArrayList<Character> keyStack = new ArrayList<>();
-	
-	
-	ArrayList<Vector> applePositions = new ArrayList<>(5);
+	ArrayList<Apple> applePositions = new ArrayList<>(5);
 	
 	int score = 0;
 	
 	Font scoreFont = new Font("Inter", Font.PLAIN, 20);
-	Font gameOverFont = new Font("Inter", Font.PLAIN, 65);
 	
 	
 	int skippedFrames = 12;
@@ -42,10 +39,10 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 	}
 	
 	private void newRandomApple() {
-		Vector newAppleVector;
+		Apple newAppleVector;
 		do {
-			newAppleVector = new Vector(random.nextInt(20), random.nextInt(20));
-		} while (applePositions.contains(newAppleVector) || snake.positions.contains(newAppleVector));
+			newAppleVector = new Apple(new Vector(random.nextInt(20), random.nextInt(20)));
+		} while (applePositions.contains(newAppleVector) || snake.positions.contains(newAppleVector.pos));
 		applePositions.add(newAppleVector);
 	}
 	
@@ -136,8 +133,8 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 		
 		g2D.setPaint(new Color(0xFF0000));
 		
-		for (Vector pos : applePositions) {
-			g2D.fillRoundRect((int) pos.x * 25, (int) pos.y * 25, 25, 25, 1, 1);
+		for (Apple apple : applePositions) {
+			g2D.fillRoundRect((int) apple.pos.x * 25, (int) apple.pos.y * 25, 25, 25, 1, 1);
 			
 		}
 	}

@@ -72,9 +72,10 @@ public class Snake {
 		this.direction = direction;
 	}
 	
-	public boolean updateAppleCollision(ArrayList<Vector> apples) {
-		if (apples.contains(positions.get(0))) {
-			apples.remove(positions.get(0));
+	public boolean updateAppleCollision(ArrayList<Apple> apples) {
+		Apple headApple = new Apple(positions.get(0));
+		if (apples.contains(headApple)) {
+			apples.remove(headApple);
 			positions.add(positions.get(positions.size() - 1));
 			return true;
 		}
