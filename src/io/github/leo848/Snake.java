@@ -3,7 +3,6 @@ package io.github.leo848;
 import java.awt.*;
 import java.util.*;
 
-@SuppressWarnings("unused")
 public class Snake {
 	boolean gameOver = false;
 	
