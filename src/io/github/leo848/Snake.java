@@ -39,8 +39,9 @@ public class Snake {
 			
 			
 			if (!direction.equals(Directions.NONE)) {
-				initialX += tempDirection.x * NumTools.map(animFrame, 0, count, 0, 25);
-				initialY += tempDirection.y * NumTools.map(animFrame, 0, count, 0, 25);
+				float extensionLength = NumTools.map(animFrame, 0, count, -12, 12);
+				initialX += tempDirection.x * extensionLength;
+				initialY += tempDirection.y * extensionLength;
 			}
 			
 			
