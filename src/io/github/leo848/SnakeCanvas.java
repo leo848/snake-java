@@ -129,8 +129,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
         g2D.setPaint(new Color(0xff0000));
 
         for (Apple apple : applePositions) {
-            g2D.fillRoundRect((int) apple.pos.x * 25, (int) apple.pos.y * 25, 25, 25, 1, 1);
-            g2D.drawString(apple.pos.x + ", " + apple.pos.y, apple.pos.x*25, apple.pos.y*25);
+            apple.draw(g2D);
         }
     }
 

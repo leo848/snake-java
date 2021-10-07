@@ -1,5 +1,6 @@
 package io.github.leo848;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -36,5 +37,10 @@ public class Apple {
 		if (!(o instanceof Apple apple)) return false;
 		
 		return pos.equals(apple.pos);
+	}
+
+	public void draw(Graphics2D g2D) {
+		g2D.fillRoundRect((int) pos.x * 25, (int) pos.y * 25, 25, 25, 1, 1);
+		g2D.drawString(pos.x + ", " + pos.y, pos.x*25, pos.y*25);
 	}
 }
