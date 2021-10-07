@@ -1,6 +1,7 @@
 package io.github.leo848;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class Apple {
 	final Vector pos;
@@ -22,8 +23,6 @@ public class Apple {
 				pos.y %= 20;
 			} while (snakePositions.contains(pos));
 		}
-
-		System.out.println("pos = " + pos);
 	}
 	
 	@Override
