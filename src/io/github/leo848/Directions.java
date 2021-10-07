@@ -7,5 +7,5 @@ public class Directions {
 	final static Vector UP = new Vector(0, -1);
 	final static Vector DOWN = new Vector(0, 1);
 	
-	final static Vector[] directions = {LEFT, RIGHT, UP, DOWN};
+	final static Vector[] dirs = {LEFT, RIGHT, UP, DOWN};
 }

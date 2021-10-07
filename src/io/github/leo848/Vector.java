@@ -2,7 +2,7 @@ package io.github.leo848;
 
 import java.io.Serializable;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "StandardVariableNames"})
 public class Vector implements Serializable {
 	public float x;
 	
@@ -130,6 +130,14 @@ public class Vector implements Serializable {
 			target.set(v.x * n, v.y * n, v.z * n);
 		}
 		return target;
+	}
+
+	public Vector mod(float n) {
+		this.x %= n;
+		this.y %= n;
+		this.z %= n;
+
+		return this;
 	}
 	
 	static public Vector sub(Vector v1, Vector v2) {
@@ -357,10 +365,9 @@ public class Vector implements Serializable {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof Vector)) {
+		if (!(obj instanceof final Vector p)) {
 			return false;
 		}
-		final Vector p = (Vector) obj;
 		return x == p.x && y == p.y && z == p.z;
 	}
 	

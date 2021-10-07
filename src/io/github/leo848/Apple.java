@@ -9,13 +9,21 @@ public class Apple {
 	public Apple(Vector pos) {
 		this.pos = pos;
 	}
-	
-	public void move(ArrayList<Vector> snakePositions) {
-		if (random.nextInt(10) == 0) {
+
+	public Apple(float x, float y) {
+		this.pos = new Vector(x, y);
+	}
+
+    public void move(ArrayList<Vector> snakePositions) {
+		if (random.nextInt(128) == 0) {
 			do {
-				pos.add(Directions.directions[random.nextInt(Directions.directions.length)]);
-			} while ((pos.x > 20 || pos.x < 0 || pos.y > 20 || pos.y < 0) || snakePositions.contains(pos));
+				pos.add(Directions.dirs[random.nextInt(Directions.dirs.length)]).add(20,20);
+				pos.x %= 20;
+				pos.y %= 20;
+			} while (snakePositions.contains(pos));
 		}
+
+		System.out.println("pos = " + pos);
 	}
 	
 	@Override
