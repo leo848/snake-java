@@ -7,14 +7,15 @@ import java.util.Random;
 public class Apple {
     final Vector pos;
     final Random random = new Random();
-    Vector animPos = new Vector();
+    Vector animPos;
 
     public Apple(Vector pos) {
         this.pos = pos;
+        this.animPos = this.pos.copy();
     }
 
     public Apple(float x, float y) {
-        this.pos = new Vector(x, y);
+        this(new Vector(x, y));
     }
 
     public void move(ArrayList<Vector> snakePositions) {
@@ -44,16 +45,19 @@ public class Apple {
             move(canvas.snake.positions);
         }
 
-        Vector diff = pos.copy().sub(animPos);
+        Vector diff = pos.copy().sub(animPos.copy());
 
 
-        if (!diff.equals(new Vector())) {
+        if (!diff.equals(new Vector())){
             System.out.println("diff = " + diff);
             System.out.println("pos = " + pos);
             System.out.println("animPos = " + animPos);
             System.out.println();
         }
-        animPos = pos;
+
+        animPos.add(diff.div(4));
+
+
     }
 
     public void draw(Graphics2D g2D) {
