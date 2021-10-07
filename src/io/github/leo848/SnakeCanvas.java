@@ -55,13 +55,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 
         frameCount++;
 
-        g2D.setPaint(Color.black);
-        g2D.setStroke(new BasicStroke(0));
-        g2D.setFont(scoreFont);
-
-        for (Apple apple : applePositions) {
-            apple.move(snake.positions);
-        }
+        setInitialValues(g2D);
 
         if (frameCount % skippedFrames == 0) {
             updateDirection();
@@ -76,8 +70,15 @@ public class SnakeCanvas extends JPanel implements KeyListener {
             return;
         }
 
+        updateGame();
         drawGame(g2D);
         drawText(g2D);
+    }
+
+    private void setInitialValues(Graphics2D g2D) {
+        g2D.setPaint(Color.black);
+        g2D.setStroke(new BasicStroke(0));
+        g2D.setFont(scoreFont);
     }
 
     private void drawSplashEffect(Graphics2D g2D) {
@@ -123,13 +124,19 @@ public class SnakeCanvas extends JPanel implements KeyListener {
         }
     }
 
+    public void updateGame() {
+        for (Apple apple : applePositions) {
+            apple.update(this);
+        }
+    }
+
     public void drawGame(Graphics2D g2D) {
         snake.draw(g2D, frameCount, skippedFrames);
 
         g2D.setPaint(new Color(0xff0000));
 
         for (Apple apple : applePositions) {
-            apple.update();
+            apple.update(this);
             apple.draw(g2D);
         }
     }
