@@ -6,6 +6,8 @@ import java.util.Random;
 
 public class Apple {
 	final Vector pos;
+	Vector animPos = new Vector();
+
 	final Random random = new Random();
 	
 	public Apple(Vector pos) {
@@ -39,8 +41,21 @@ public class Apple {
 		return pos.equals(apple.pos);
 	}
 
+	public void update() {
+		Vector diff = pos.copy().sub(animPos);
+
+
+
+		System.out.println("diff = " + diff);
+		animPos = pos;
+	}
+
 	public void draw(Graphics2D g2D) {
-		g2D.fillRoundRect((int) pos.x * 25, (int) pos.y * 25, 25, 25, 1, 1);
-		g2D.drawString(pos.x + ", " + pos.y, pos.x*25, pos.y*25);
+		draw(g2D, false);
+	}
+
+	public void draw(Graphics2D g2D, boolean showPosition) {
+		g2D.fillRoundRect((int) animPos.x * 25, (int) animPos.y * 25, 25, 25, 1, 1);
+		if (showPosition) g2D.drawString(pos.x + ", " + pos.y, animPos.x*25, animPos.y*25);
 	}
 }
