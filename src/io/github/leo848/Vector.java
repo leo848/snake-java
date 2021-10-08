@@ -289,6 +289,13 @@ public class Vector implements Serializable {
 		return this;
 	}
 	
+	public Vector div(Vector v) {
+		x /= v.x;
+		y /= v.y;
+		z /= v.z;
+		return this;
+	}
+	
 	public Vector set(float x, float y) {
 		this.x = x;
 		this.y = y;
