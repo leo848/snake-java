@@ -2,7 +2,7 @@ package io.github.leo848;
 
 import java.io.Serializable;
 
-@SuppressWarnings({"unused", "StandardVariableNames"})
+@SuppressWarnings({"unused", "StandardVariableNames", "UnusedReturnValue"})
 public class Vector implements Serializable {
 	public float x;
 	
@@ -112,11 +112,8 @@ public class Vector implements Serializable {
 		return target;
 	}
 	
-	public Vector set(float x, float y, float z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		return this;
+	public boolean isEmpty() {
+		return x == 0 && y == 0 && z == 0;
 	}
 	
 	static public Vector mult(Vector v, float n) {
@@ -131,12 +128,19 @@ public class Vector implements Serializable {
 		}
 		return target;
 	}
-
+	
 	public Vector mod(float n) {
 		this.x %= n;
 		this.y %= n;
 		this.z %= n;
 
+		return this;
+	}
+	
+	public Vector set(float x, float y, float z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
 		return this;
 	}
 	
