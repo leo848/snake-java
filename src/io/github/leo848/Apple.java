@@ -7,11 +7,9 @@ import java.util.Random;
 public class Apple {
 	final Vector pos;
 	final Random random = new Random();
-	Vector animPos;
 	
 	public Apple(Vector pos) {
 		this.pos = pos;
-		this.animPos = this.pos.copy();
 	}
 	
 	public Apple(float x, float y) {
@@ -19,12 +17,30 @@ public class Apple {
 	}
 	
 	public void move(ArrayList<Vector> snakePositions) {
+		Vector randomDirection;
 		do {
-			pos
-					.add(Directions.dirs[random.nextInt(Directions.dirs.length)])
-					.add(20, 20)
-					.mod(20);
-		} while (snakePositions.contains(pos));
+			randomDirection = Directions.dirs[random.nextInt(Directions.dirs.length)];
+		} while (snakePositions.contains(pos.copy().add(randomDirection).add(20, 20).mod(20)));
+		
+		pos
+				.add(randomDirection)
+				.add(20, 20)
+				.mod(20);
+	}
+	
+	public void update(SnakeCanvas canvas) {
+		if (random.nextInt(420) == 0) {
+			move(canvas.snake.positions);
+		}
+	}
+	
+	public void draw(Graphics2D g2D) {
+		draw(g2D, false);
+	}
+	
+	public void draw(Graphics2D g2D, boolean showPosition) {
+		g2D.fillRoundRect((int) pos.x * 25, (int) pos.y * 25, 25, 25, 1, 1);
+		if (showPosition) g2D.drawString(pos.x + ", " + pos.y, pos.x * 25, pos.y * 25);
 	}
 	
 	@Override
@@ -38,34 +54,5 @@ public class Apple {
 		if (!(o instanceof Apple apple)) return false;
 		
 		return pos.equals(apple.pos);
-	}
-	
-	public void update(SnakeCanvas canvas) {
-		if (random.nextInt(128) == 0) {
-			move(canvas.snake.positions);
-		}
-		
-		Vector diff = pos.copy().sub(animPos.copy());
-		
-		
-		if (!diff.equals(new Vector())) {
-			System.out.println("diff = " + diff);
-			System.out.println("pos = " + pos);
-			System.out.println("animPos = " + animPos);
-			System.out.println();
-		}
-		
-		animPos.add(diff.div(10));
-		
-		
-	}
-	
-	public void draw(Graphics2D g2D) {
-		draw(g2D, false);
-	}
-	
-	public void draw(Graphics2D g2D, boolean showPosition) {
-		g2D.fillRoundRect((int) animPos.x * 25, (int) animPos.y * 25, 25, 25, 1, 1);
-		if (showPosition) g2D.drawString(pos.x + ", " + pos.y, animPos.x * 25, animPos.y * 25);
 	}
 }
