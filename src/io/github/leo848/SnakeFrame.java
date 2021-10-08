@@ -6,7 +6,7 @@ import java.awt.*;
 public class SnakeFrame extends JFrame {
 	SnakeCanvas canvas;
 	SnakeFrame(GameLoop gameLoop) {
-		canvas = new SnakeCanvas(gameLoop);
+		canvas = new SnakeCanvas(gameLoop, new Dimension(500,500));
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		

@@ -5,15 +5,17 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Apple {
+	private SnakeCanvas canvas;
 	final Vector pos;
 	final Random random = new Random();
 	
-	public Apple(Vector pos) {
+	public Apple(SnakeCanvas canvas, Vector pos) {
+		this.canvas = canvas;
 		this.pos = pos;
 	}
 	
-	public Apple(float x, float y) {
-		this(new Vector(x, y));
+	public Apple(SnakeCanvas canvas, float x, float y) {
+		this(canvas, new Vector(x, y));
 	}
 	
 	public void move(ArrayList<Vector> snakePositions) {

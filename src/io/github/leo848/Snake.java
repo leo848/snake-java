@@ -1,7 +1,7 @@
 package io.github.leo848;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Graphics2D;
+import java.util.ArrayList;
 
 public class Snake {
 	boolean gameOver = false;
@@ -9,22 +9,24 @@ public class Snake {
 	Vector direction = Directions.NONE;
 	ArrayList<Vector> positions = new ArrayList<>();
 	private int animFrame;
+	SnakeCanvas canvas;
 	
-	public Snake() {
+	public Snake(SnakeCanvas canvas) {
+		this.canvas = canvas;
 		positions.add(new Vector(10, 10));
 		positions.add(new Vector(10, 11));
 	}
 	
-	public void draw(Graphics2D g2D, int frameCount, int count) {
+	public void draw(Graphics2D g2D) {
 		g2D.fillRect(0, 0, 500, 500);
 		animFrame++;
 		
-		g2D.setPaint(NumTools.getGradientColor(0, 1, frameCount));
+		g2D.setPaint(NumTools.getGradientColor(0, 1, canvas.frameCount));
 		g2D.fillRect((int) (positions.get(0).x * 25), (int) (positions.get(0).y * 25), 25, 25);
 		
 		for (Vector pos : positions) {
 			
-			g2D.setPaint(NumTools.getGradientColor(positions.indexOf(pos), positions.size(), frameCount));
+			g2D.setPaint(NumTools.getGradientColor(positions.indexOf(pos), positions.size(), canvas.frameCount));
 			
 			int initialX = (int) (pos.x * 25);
 			int initialY = (int) (pos.y * 25);
@@ -38,7 +40,7 @@ public class Snake {
 			
 			
 			if (!direction.equals(Directions.NONE)) {
-				float extensionLength = NumTools.map(animFrame, 0, count, -12, 12);
+				float extensionLength = NumTools.map(animFrame, 0, canvas.skippedFrames, -12, 12);
 				initialX += tempDirection.x * extensionLength;
 				initialY += tempDirection.y * extensionLength;
 			}
@@ -73,9 +75,9 @@ public class Snake {
 	}
 	
 	public boolean updateAppleCollision(ArrayList<Apple> apples) {
-		Apple headApple = new Apple(positions.get(0));
-		if (apples.contains(headApple)) {
-			apples.remove(headApple);
+		Apple possibleHeadApple = new Apple(canvas, positions.get(0));
+		if (apples.contains(possibleHeadApple)) {
+			apples.remove(possibleHeadApple);
 			positions.add(positions.get(positions.size() - 1));
 			return true;
 		}
@@ -91,7 +93,7 @@ public class Snake {
 		}
 	}
 	
-	boolean checkForGameOver(Graphics2D g2D) {
+	boolean checkForGameOver() {
 		gameOver = false;
 		if (positions.subList(1, positions.size()).contains(positions.get(0))) {
 			gameOver = true;

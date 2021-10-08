@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class SnakeCanvas extends JPanel implements KeyListener {
 
-    final Snake snake = new Snake();
+    final Snake snake = new Snake(this);
 
     final long startTime = System.nanoTime();
     Random random = new Random();
@@ -27,9 +27,9 @@ public class SnakeCanvas extends JPanel implements KeyListener {
 
     int skippedFrames = 12;
 
-    SnakeCanvas(GameLoop loop) {
+    SnakeCanvas(GameLoop loop, Dimension size) {
         gameLoop = loop;
-        setPreferredSize(new Dimension(500, 500));
+        setPreferredSize(size);
 
         for (int i = 0; i < 5; i++) {
             newRandomApple();
@@ -40,7 +40,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
         Apple newAppleVector;
 
         do {
-            newAppleVector = new Apple(random.nextInt(20), random.nextInt(20));
+            newAppleVector = new Apple(this, random.nextInt(20), random.nextInt(20));
         } while (applePositions.contains(newAppleVector) || snake.positions.contains(newAppleVector.pos));
         applePositions.add(newAppleVector);
     }
@@ -62,7 +62,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
             updateSnake();
         }
 
-        if (snake.checkForGameOver(g2D)) {
+        if (snake.checkForGameOver()) {
             g2D.drawRect(-0, -0, 500, 500);
             drawText(g2D);
             drawSplashEffect(g2D);
@@ -131,7 +131,7 @@ public class SnakeCanvas extends JPanel implements KeyListener {
     }
 
     public void drawGame(Graphics2D g2D) {
-        snake.draw(g2D, frameCount, skippedFrames);
+        snake.draw(g2D);
 
         g2D.setPaint(new Color(0xff0000));
 
